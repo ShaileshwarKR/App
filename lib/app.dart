@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'models/place.dart';
 import 'screens/daily_input_screen.dart';
 import 'screens/home_shell.dart';
+import 'screens/location_access_screen.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/quick_setup_screen.dart';
 import 'screens/suggestion_detail_screen.dart';
@@ -19,6 +20,7 @@ class LifeOsApp extends StatelessWidget {
       theme: buildLifeOsTheme(),
       home: const OnboardingScreen(),
       routes: {
+        LocationAccessScreen.routeName: (_) => const LocationAccessScreen(),
         QuickSetupScreen.routeName: (_) => const QuickSetupScreen(),
         HomeShell.routeName: (_) => const HomeShell(),
         DailyInputScreen.routeName: (_) => const DailyInputScreen(),

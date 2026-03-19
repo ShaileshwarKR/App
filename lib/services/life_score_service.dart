@@ -1,14 +1,14 @@
 import '../models/daily_log.dart';
 
-/// Combines energy, stress, recovery, and basic wellbeing signals
-/// into a simple 0-100 Life Score for the MVP.
+/// Combines energy, stress, recovery, and wellbeing signals into
+/// a simple 0-100 Life Score. Automated values take precedence when present.
 class LifeScoreService {
   const LifeScoreService();
 
   int calculate(DailyLog log) {
-    final sleepScore = _clamp((log.sleepHours / 8) * 22, 0, 22);
-    final workScore = _clamp((10 - (log.workHours - 8).abs()) * 2.2, 0, 18);
-    final commuteScore = _clamp(14 - (log.commuteMinutes / 6), 0, 14);
+    final sleepScore = _clamp((log.effectiveSleepHours / 8) * 22, 0, 22);
+    final workScore = _clamp((10 - (log.effectiveWorkHours - 8).abs()) * 2.2, 0, 18);
+    final commuteScore = _clamp(14 - (log.effectiveCommuteMinutes / 6), 0, 14);
     final stressScore = _clamp((11 - log.stressLevel) * 2, 0, 20);
     final hydrationScore = _clamp((log.hydrationLiters / 2.5) * 10, 0, 10);
     final mealsScore = _clamp((log.mealsCount / 3) * 8, 0, 8);

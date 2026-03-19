@@ -3,6 +3,7 @@ import '../models/life_suggestion.dart';
 import '../models/place.dart';
 
 /// Builds a lightweight, explainable suggestion list from daily inputs.
+/// Suggestions use automated commute/work/sleep values whenever available.
 class SuggestionsService {
   const SuggestionsService();
 
@@ -12,7 +13,7 @@ class SuggestionsService {
   }) {
     final suggestions = <LifeSuggestion>[];
 
-    if (log.stressLevel >= 7) {
+    if (log.stressLevel >= 7 || log.effectiveSleepHours < 6.5) {
       suggestions.add(
         LifeSuggestion(
           title: 'You seem tense',
@@ -68,7 +69,7 @@ class SuggestionsService {
       );
     }
 
-    if (log.workHours >= 9) {
+    if (log.effectiveWorkHours >= 9) {
       suggestions.add(
         const LifeSuggestion(
           title: 'Protect your evening',

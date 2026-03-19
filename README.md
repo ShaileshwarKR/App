@@ -27,7 +27,7 @@ Open `preview/index.html` in a browser to review the screen designs immediately,
 - `lib/app.dart`: app routes and entry flow
 - `lib/theme.dart`: design system
 - `lib/screens/*`: screen implementations, now including a location access step before quick setup
-- `lib/services/*`: modular score, suggestions, maps, notifications, and demo-data services
+- `lib/services/*`: modular score, suggestions, maps, notifications, profile storage, automation, and demo-data services
 - `lib/widgets/*`: reusable components such as charts, suggestion cards, and habit streak cards
 
 ## When Flutter is available

@@ -5,12 +5,18 @@ import 'screens/daily_input_screen.dart';
 import 'screens/home_shell.dart';
 import 'screens/location_access_screen.dart';
 import 'screens/onboarding_screen.dart';
+import 'screens/profile_onboarding_screen.dart';
 import 'screens/quick_setup_screen.dart';
 import 'screens/suggestion_detail_screen.dart';
 import 'theme.dart';
 
 class LifeOsApp extends StatelessWidget {
-  const LifeOsApp({super.key});
+  const LifeOsApp({
+    super.key,
+    this.showProfileOnboarding = false,
+  });
+
+  final bool showProfileOnboarding;
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +24,11 @@ class LifeOsApp extends StatelessWidget {
       title: 'LifeOS',
       debugShowCheckedModeBanner: false,
       theme: buildLifeOsTheme(),
-      home: const OnboardingScreen(),
+      home: showProfileOnboarding
+          ? const ProfileOnboardingScreen()
+          : const OnboardingScreen(),
       routes: {
+        ProfileOnboardingScreen.routeName: (_) => const ProfileOnboardingScreen(),
         LocationAccessScreen.routeName: (_) => const LocationAccessScreen(),
         QuickSetupScreen.routeName: (_) => const QuickSetupScreen(),
         HomeShell.routeName: (_) => const HomeShell(),

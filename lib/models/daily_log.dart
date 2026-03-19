@@ -13,6 +13,9 @@ class DailyLog {
     required this.hydrationLiters,
     required this.mealsCount,
     required this.exerciseMinutes,
+    this.automatedWorkHours,
+    this.automatedSleepHours,
+    this.automatedCommuteMinutes,
   });
 
   final DateTime date;
@@ -24,6 +27,9 @@ class DailyLog {
   final double hydrationLiters;
   final int mealsCount;
   final int exerciseMinutes;
+  final double? automatedWorkHours;
+  final double? automatedSleepHours;
+  final int? automatedCommuteMinutes;
 
   String get moodLabel => switch (mood) {
         MoodLevel.happy => 'Happy',
@@ -37,6 +43,14 @@ class DailyLog {
         MoodLevel.low => Icons.sentiment_dissatisfied_rounded,
       };
 
+  double get effectiveWorkHours => automatedWorkHours ?? workHours;
+  double get effectiveSleepHours => automatedSleepHours ?? sleepHours;
+  int get effectiveCommuteMinutes => automatedCommuteMinutes ?? commuteMinutes;
+
+  bool get hasAutomatedWorkHours => automatedWorkHours != null;
+  bool get hasAutomatedSleepHours => automatedSleepHours != null;
+  bool get hasAutomatedCommute => automatedCommuteMinutes != null;
+
   DailyLog copyWith({
     DateTime? date,
     MoodLevel? mood,
@@ -47,6 +61,9 @@ class DailyLog {
     double? hydrationLiters,
     int? mealsCount,
     int? exerciseMinutes,
+    double? automatedWorkHours,
+    double? automatedSleepHours,
+    int? automatedCommuteMinutes,
   }) {
     return DailyLog(
       date: date ?? this.date,
@@ -58,6 +75,10 @@ class DailyLog {
       hydrationLiters: hydrationLiters ?? this.hydrationLiters,
       mealsCount: mealsCount ?? this.mealsCount,
       exerciseMinutes: exerciseMinutes ?? this.exerciseMinutes,
+      automatedWorkHours: automatedWorkHours ?? this.automatedWorkHours,
+      automatedSleepHours: automatedSleepHours ?? this.automatedSleepHours,
+      automatedCommuteMinutes:
+          automatedCommuteMinutes ?? this.automatedCommuteMinutes,
     );
   }
 }

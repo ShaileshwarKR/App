@@ -38,6 +38,11 @@ class SuggestionDetailScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(place.description),
                 const SizedBox(height: 16),
+                Text(
+                  place.area,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 12),
                 Row(
                   children: [
                     Chip(label: Text(place.distance)),

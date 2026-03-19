@@ -7,10 +7,12 @@ class PlaceTile extends StatelessWidget {
     super.key,
     required this.place,
     required this.onTap,
+    this.trailing,
   });
 
   final Place place;
   final VoidCallback onTap;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -39,16 +41,15 @@ class PlaceTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    place.name,
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
+                  Text(place.name, style: Theme.of(context).textTheme.bodyLarge),
+                  const SizedBox(height: 4),
+                  Text(place.area),
                   const SizedBox(height: 4),
                   Text('${place.distance} • ${place.time}'),
                 ],
               ),
             ),
-            Chip(label: Text(place.tagLabel)),
+            trailing ?? Chip(label: Text(place.tagLabel)),
           ],
         ),
       ),

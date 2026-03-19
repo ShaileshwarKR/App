@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme.dart';
 import '../widgets/lifeos_scaffold.dart';
+import 'habits_screen.dart';
 import 'home_screen.dart';
 import 'profile_screen.dart';
 import 'weekly_insights_screen.dart';
@@ -21,6 +22,7 @@ class _HomeShellState extends State<HomeShell> {
   final _pages = const [
     HomeScreen(),
     WeeklyInsightsScreen(),
+    HabitsScreen(),
     ProfileScreen(),
   ];
 
@@ -47,6 +49,10 @@ class _HomeShellState extends State<HomeShell> {
             BottomNavigationBarItem(
               icon: Icon(Icons.insights_rounded),
               label: 'Insights',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.emoji_events_rounded),
+              label: 'Habits',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_rounded),

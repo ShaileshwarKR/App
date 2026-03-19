@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme.dart';
 import '../widgets/lifeos_scaffold.dart';
 import '../widgets/primary_button.dart';
-import 'quick_setup_screen.dart';
+import 'location_access_screen.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -65,7 +65,7 @@ class OnboardingScreen extends StatelessWidget {
             label: 'Get Started',
             onPressed: () => Navigator.pushNamed(
               context,
-              QuickSetupScreen.routeName,
+              LocationAccessScreen.routeName,
             ),
           ),
           const SizedBox(height: 20),

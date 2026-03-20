@@ -38,3 +38,7 @@ Typical commands would be:
 flutter pub get
 flutter run
 ```
+
+## Firestore rules
+
+- `firestore.rules`: production-oriented owner-only rules for `users`, `daily_logs`, and `events`.

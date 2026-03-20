@@ -1,33 +1,20 @@
 import '../models/daily_log.dart';
 
-/// Combines energy, stress, recovery, and wellbeing signals into
-/// a simple 0-100 Life Score. Automated values take precedence when present.
+/// Real-time weighted Life Score engine.
+/// sleep (30%), work (30%), commute (20%), activity (20%)
 class LifeScoreService {
   const LifeScoreService();
 
-  int calculate(DailyLog log) {
-    final sleepScore = _clamp((log.effectiveSleepHours / 8) * 22, 0, 22);
-    final workScore = _clamp((10 - (log.effectiveWorkHours - 8).abs()) * 2.2, 0, 18);
-    final commuteScore = _clamp(14 - (log.effectiveCommuteMinutes / 6), 0, 14);
-    final stressScore = _clamp((11 - log.stressLevel) * 2, 0, 20);
-    final hydrationScore = _clamp((log.hydrationLiters / 2.5) * 10, 0, 10);
-    final mealsScore = _clamp((log.mealsCount / 3) * 8, 0, 8);
-    final exerciseScore = _clamp((log.exerciseMinutes / 30) * 8, 0, 8);
-    final moodScore = switch (log.mood) {
-      MoodLevel.happy => 10.0,
-      MoodLevel.neutral => 7.0,
-      MoodLevel.low => 3.0,
-    };
+  DailyLog withScore(DailyLog log) {
+    return log.copyWith(lifeScore: calculate(log));
+  }
 
-    return (sleepScore +
-            workScore +
-            commuteScore +
-            stressScore +
-            hydrationScore +
-            mealsScore +
-            exerciseScore +
-            moodScore)
-        .round();
+  int calculate(DailyLog log) {
+    final sleepScore = _normalized(log.effectiveSleepHours, ideal: 8, max: 10) * 30;
+    final workScore = _workBalance(log.effectiveWorkHours) * 30;
+    final commuteScore = _inverse(log.effectiveCommuteMinutes.toDouble(), ideal: 20, worst: 120) * 20;
+    final activityScore = _normalized(log.exerciseMinutes.toDouble(), ideal: 30, max: 60) * 20;
+    return (sleepScore + workScore + commuteScore + activityScore).round();
   }
 
   String statusFor(int score) {
@@ -41,9 +28,20 @@ class LifeScoreService {
     return scores.reduce((a, b) => a + b) / scores.length;
   }
 
-  double _clamp(double value, double min, double max) {
-    if (value < min) return min;
-    if (value > max) return max;
-    return value;
+  double _normalized(double value, {required double ideal, required double max}) {
+    if (value <= 0) return 0;
+    return (value / ideal).clamp(0, 1.0);
+  }
+
+  double _inverse(double value, {required double ideal, required double worst}) {
+    if (value <= ideal) return 1;
+    final normalized = 1 - ((value - ideal) / (worst - ideal));
+    return normalized.clamp(0, 1.0);
+  }
+
+  double _workBalance(double hours) {
+    final delta = (hours - 8).abs();
+    final score = 1 - (delta / 4);
+    return score.clamp(0, 1.0);
   }
 }

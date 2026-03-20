@@ -1,3 +1,5 @@
+import 'location_point.dart';
+
 class UserProfile {
   const UserProfile({
     required this.userId,
@@ -7,6 +9,8 @@ class UserProfile {
     required this.isWfh,
     required this.profilePictureUrl,
     required this.workSchedule,
+    this.homeLocation,
+    this.officeLocation,
   });
 
   final String userId;
@@ -16,6 +20,8 @@ class UserProfile {
   final bool isWfh;
   final String profilePictureUrl;
   final Map<String, dynamic> workSchedule;
+  final LocationPoint? homeLocation;
+  final LocationPoint? officeLocation;
 
   Map<String, dynamic> toMap() {
     return {
@@ -25,6 +31,8 @@ class UserProfile {
       'is_wfh': isWfh,
       'profile_picture_url': profilePictureUrl,
       'work_schedule': workSchedule,
+      'home_location': homeLocation?.toMap(),
+      'office_location': officeLocation?.toMap(),
     };
   }
 
@@ -46,6 +54,12 @@ class UserProfile {
       workSchedule: Map<String, dynamic>.from(
         map['work_schedule'] as Map? ?? const {},
       ),
+      homeLocation: map['home_location'] is Map
+          ? LocationPoint.fromMap(Map<String, dynamic>.from(map['home_location'] as Map))
+          : null,
+      officeLocation: map['office_location'] is Map
+          ? LocationPoint.fromMap(Map<String, dynamic>.from(map['office_location'] as Map))
+          : null,
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../models/location_point.dart';
 import '../models/user_profile.dart';
 import '../services/profile_service.dart';
 import '../theme.dart';
@@ -129,7 +130,7 @@ class _ProfileOnboardingScreenState extends State<ProfileOnboardingScreen> {
   Future<void> _saveProfile() async {
     setState(() => isSaving = true);
     final profile = UserProfile(
-      userId: ProfileService.demoUserId,
+      userId: ProfileService().currentUserId,
       name: nameController.text.trim().isEmpty ? 'Maya' : nameController.text.trim(),
       homeAddress: homeController.text.trim(),
       companyAddress: companyController.text.trim(),
@@ -140,6 +141,13 @@ class _ProfileOnboardingScreenState extends State<ProfileOnboardingScreen> {
         'start_hour': 9,
         'end_hour': 18,
       },
+      // TODO: Replace with exact coordinates from a real picker / Places API.
+      homeLocation: homeController.text.trim().isEmpty
+          ? null
+          : const LocationPoint(latitude: 37.7749, longitude: -122.4194),
+      officeLocation: companyController.text.trim().isEmpty
+          ? null
+          : const LocationPoint(latitude: 37.7897, longitude: -122.3942),
     );
 
     await ProfileService().saveProfile(profile);

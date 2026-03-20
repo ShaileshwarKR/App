@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    /**
+     * Returns true only when the request is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Returns true only when the authenticated user owns the target path.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * User profile document:
+     * users/{userId}
+     */
+    match /users/{userId} {
+      allow read, create, update, delete: if isOwner(userId);
+    }
+
+    /**
+     * Daily log subtree for a specific user.
+     * Covers document paths such as:
+     * daily_logs/{userId}/{date}
+     * or nested variants under that user-owned branch.
+     */
+    match /daily_logs/{userId}/{document=**} {
+      allow read, create, update, delete: if isOwner(userId);
+    }
+
+    /**
+     * Event subtree for a specific user.
+     * Covers document paths such as:
+     * events/{userId}/{eventId}
+     * or nested variants under that user-owned branch.
+     */
+    match /events/{userId}/{document=**} {
+      allow read, create, update, delete: if isOwner(userId);
+    }
+
+    /**
+     * Deny every other document path by default.
+     * This keeps production rules intentionally strict.
+     */
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

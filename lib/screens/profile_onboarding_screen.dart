@@ -21,6 +21,7 @@ class ProfileOnboardingScreen extends StatefulWidget {
 }
 
 class _ProfileOnboardingScreenState extends State<ProfileOnboardingScreen> {
+  final profileService = ProfileService();
   final nameController = TextEditingController();
   final homeController = TextEditingController();
   final companyController = TextEditingController();
@@ -118,7 +119,7 @@ class _ProfileOnboardingScreenState extends State<ProfileOnboardingScreen> {
             const SizedBox(height: 20),
             PrimaryButton(
               label: isSaving ? 'Saving...' : 'Save Profile',
-              onPressed: isSaving ? () {} : _saveProfile,
+              onPressed: isSaving ? null : _saveProfile,
             ),
             const SizedBox(height: 12),
           ],
@@ -128,9 +129,11 @@ class _ProfileOnboardingScreenState extends State<ProfileOnboardingScreen> {
   }
 
   Future<void> _saveProfile() async {
+    if (isSaving) return;
     setState(() => isSaving = true);
+
     final profile = UserProfile(
-      userId: ProfileService().currentUserId,
+      userId: profileService.currentUserId,
       name: nameController.text.trim().isEmpty ? 'Maya' : nameController.text.trim(),
       homeAddress: homeController.text.trim(),
       companyAddress: companyController.text.trim(),
@@ -150,13 +153,24 @@ class _ProfileOnboardingScreenState extends State<ProfileOnboardingScreen> {
           : const LocationPoint(latitude: 37.7897, longitude: -122.3942),
     );
 
-    await ProfileService().saveProfile(profile);
-    if (!mounted) return;
-    Navigator.pushNamedAndRemoveUntil(
-      context,
-      HomeShell.routeName,
-      (route) => false,
-    );
+    try {
+      await profileService.saveProfile(profile);
+      if (!mounted) return;
+
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        HomeShell.routeName,
+        (route) => false,
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('We could not save your profile. Please try again.'),
+        ),
+      );
+      setState(() => isSaving = false);
+    }
   }
 
   void _mockPhotoPick() {

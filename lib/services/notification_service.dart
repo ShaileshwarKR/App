@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import '../models/daily_log.dart';
@@ -10,15 +11,26 @@ class NotificationService {
   NotificationService({
     FirebaseMessaging? messaging,
     FirebaseFirestore? firestore,
-  })  : _messaging = messaging ?? FirebaseMessaging.instance,
-        _firestore = firestore ?? FirebaseFirestore.instance;
+  })  : _messaging = messaging ?? _defaultMessaging,
+        _firestore = firestore ?? _defaultFirestore;
 
-  final FirebaseMessaging _messaging;
-  final FirebaseFirestore _firestore;
+  static FirebaseMessaging? get _defaultMessaging =>
+      Firebase.apps.isEmpty ? null : FirebaseMessaging.instance;
+  static FirebaseFirestore? get _defaultFirestore =>
+      Firebase.apps.isEmpty ? null : FirebaseFirestore.instance;
+
+  final FirebaseMessaging? _messaging;
+  final FirebaseFirestore? _firestore;
 
   Future<void> initialize() async {
-    await _messaging.requestPermission();
-    await _messaging.getToken();
+    final messaging = _messaging;
+    if (messaging == null) return;
+    try {
+      await messaging.requestPermission();
+      await messaging.getToken();
+    } catch (_) {
+      // Notifications stay disabled when Firebase Messaging is unavailable.
+    }
   }
 
   Future<void> queueSmartNotifications({
@@ -26,14 +38,29 @@ class NotificationService {
     required DailyLog log,
     required List<LifeSuggestion> suggestions,
   }) async {
+    final firestore = _firestore;
+    if (firestore == null) return;
+
     final payloads = <Map<String, dynamic>>[];
 
     if (log.effectiveWorkHours >= 2 && log.workStartAt != null && log.workEndAt == null) {
-      payloads.add(_payload(userId, 'Time for a break', 'You have been working for 2+ hours. Step away for a few minutes.'));
+      payloads.add(
+        _payload(
+          userId,
+          'Time for a break',
+          'You have been working for 2+ hours. Step away for a few minutes.',
+        ),
+      );
     }
 
     if (log.effectiveSleepHours < 6.5) {
-      payloads.add(_payload(userId, 'Lighter day suggested', 'Low sleep was detected. Consider lowering the intensity today.'));
+      payloads.add(
+        _payload(
+          userId,
+          'Lighter day suggested',
+          'Low sleep was detected. Consider lowering the intensity today.',
+        ),
+      );
     }
 
     if (payloads.isEmpty && suggestions.isNotEmpty) {
@@ -41,7 +68,15 @@ class NotificationService {
     }
 
     for (final payload in payloads) {
-      await _firestore.collection('users').doc(userId).collection('notification_queue').add(payload);
+      try {
+        await firestore
+            .collection('users')
+            .doc(userId)
+            .collection('notification_queue')
+            .add(payload);
+      } catch (_) {
+        // Skip remote queueing when Firestore is unavailable.
+      }
     }
   }
 

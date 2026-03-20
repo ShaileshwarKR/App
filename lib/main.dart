@@ -6,7 +6,15 @@ import 'services/profile_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+
+  try {
+    await Firebase.initializeApp();
+  } on FirebaseException catch (error) {
+    debugPrint('Firebase initialization skipped: ${error.code}');
+  } catch (error) {
+    debugPrint('Firebase initialization skipped: $error');
+  }
+
   final hasProfile = await ProfileService().hasLocalProfile();
   runApp(LifeOsApp(showProfileOnboarding: !hasProfile));
 }

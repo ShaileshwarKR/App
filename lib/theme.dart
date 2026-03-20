@@ -60,7 +60,7 @@ ThemeData buildLifeOsTheme() {
       centerTitle: false,
       foregroundColor: LifeOsColors.textPrimary,
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       elevation: 0,
       color: LifeOsColors.surface,
       shape: RoundedRectangleBorder(

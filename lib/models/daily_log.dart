@@ -61,6 +61,7 @@ class DailyLog {
   double get effectiveWorkHours => automatedWorkHours ?? workHours;
   double get effectiveSleepHours => automatedSleepHours ?? sleepHours;
   int get effectiveCommuteMinutes => automatedCommuteMinutes ?? commuteMinutes;
+  int get weekday => date.weekday;
 
   bool get hasAutomatedWorkHours => automatedWorkHours != null;
   bool get hasAutomatedSleepHours => automatedSleepHours != null;
